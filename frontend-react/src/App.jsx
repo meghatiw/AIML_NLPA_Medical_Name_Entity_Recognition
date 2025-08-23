@@ -1,17 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { extract, uploadFiles, exportEntities, exportEvents, getDataset } from './api'
+import {
+  extract,
+  uploadFiles,
+  exportEntities,
+  exportEvents,
+  getDataset,
+  getMTSpecialties,
+  getMTNotes
+} from './api'
 
-const E_TYPES = ['PATIENT','MEDICATION','DISEASE','TREATMENT','PROCEDURE','SYMPTOM','LAB_TEST','AGE','DOSAGE','ROUTE','FREQUENCY','DATE']
-const EVENT_TYPES = ['MedicationAdministration','Diagnosis','Procedure','Admission','Discharge']
+// NEW: extended entity types (matches your updated backend rules)
+const E_TYPES = [
+  'PATIENT', 'MEDICATION', 'DISEASE', 'TREATMENT', 'PROCEDURE', 'SYMPTOM', 'LAB_TEST',
+  'AGE', 'DOSAGE', 'ROUTE', 'FREQUENCY', 'DATE',
+  'WEIGHT', 'BP', 'GLUCOSE', 'PROGRAM', 'VITAL_SIGN', 'MEASUREMENT_UNIT'
+]
 
-function Chipbar({items, selected, onToggle}){
+// Same event types as before
+const EVENT_TYPES = ['MedicationAdministration', 'Diagnosis', 'Procedure', 'Admission', 'Discharge']
+
+function Chipbar({ items, selected, onToggle }) {
   return (
     <div className="chipbar">
-      {items.map(it=>{
+      {items.map((it) => {
         const isOn = selected.has(it)
         return (
-          <label key={it} className={`chip ${isOn?'active':''}`}>
-            <input type="checkbox" checked={isOn} onChange={e=>onToggle(it, e.target.checked)} /> {it}
+          <label key={it} className={`chip ${isOn ? 'active' : ''}`}>
+            <input
+              type="checkbox"
+              checked={isOn}
+              onChange={(e) => onToggle(it, e.target.checked)}
+            />
+            {it}
           </label>
         )
       })}
@@ -19,7 +39,7 @@ function Chipbar({items, selected, onToggle}){
   )
 }
 
-function App(){
+function App() {
   const [text, setText] = useState('')
   const [entities, setEntities] = useState([])
   const [events, setEvents] = useState([])
@@ -29,99 +49,229 @@ function App(){
   const [dataset, setDataset] = useState([])
   const [noteIdx, setNoteIdx] = useState(0)
   const [batch, setBatch] = useState({ files: [], totals: null })
+  const [useML, setUseML] = useState(false)
 
-  useEffect(()=>{ getDataset().then(setDataset) }, [])
+  // header badge showing current data source
+  const [sourceInfo, setSourceInfo] = useState({ name: 'demo', extra: '', count: 0 })
 
-  const filteredEntities = useMemo(()=>entities.filter(e=>selectedE.has(e.type)), [entities, selectedE])
-  const filteredEvents = useMemo(()=>events.filter(e=>selectedEv.has(e.type)), [events, selectedEv])
+  // MTSamples
+  const [mtSpecialties, setMtSpecialties] = useState([])
+  const [chosenSpec, setChosenSpec] = useState('')
 
-  // Debounced live extraction for single-text editor
-  useEffect(()=>{
-    const t = setTimeout(()=>{
-      if(!text.trim()) { setEntities([]); setEvents([]); setAnalytics({}); return }
-      extract({ text, entity_types: Array.from(selectedE), event_types: Array.from(selectedEv) })
-        .then(({entities, events, analytics})=>{ setEntities(entities||[]); setEvents(events||[]); setAnalytics(analytics||{}) })
+  // Load demo dataset + specialties
+  useEffect(() => {
+    getDataset().then((ds) => {
+      setDataset(ds)
+      setSourceInfo({ name: 'demo', extra: '', count: ds.length })
+    })
+    getMTSpecialties().then((d) => setMtSpecialties(d.specialties || [])).catch(() => {})
+  }, [])
+
+  // Filter using toggles
+  const filteredEntities = useMemo(
+    () => entities.filter((e) => selectedE.has(e.type)),
+    [entities, selectedE]
+  )
+  const filteredEvents = useMemo(
+    () => events.filter((e) => selectedEv.has(e.type)),
+    [events, selectedEv]
+  )
+
+  // Debounced extraction whenever text or toggles change
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!text.trim()) {
+        setEntities([])
+        setEvents([])
+        setAnalytics({})
+        return
+      }
+      extract({
+        text,
+        entity_types: Array.from(selectedE),
+        event_types: Array.from(selectedEv),
+        use_ml: useML
+      })
+        .then(({ entities, events, analytics }) => {
+          setEntities(entities || [])
+          setEvents(events || [])
+          setAnalytics(analytics || {})
+        })
         .catch(console.error)
-    }, 400)
-    return ()=>clearTimeout(t)
-  }, [text, selectedE, selectedEv])
+    }, 350)
+    return () => clearTimeout(t)
+  }, [text, selectedE, selectedEv, useML])
 
-  function toggleSet(setter){
-    return (key, on)=>{
-      setter(prev=>{ const next = new Set(prev); if(on) next.add(key); else next.delete(key); return next })
+  // Toggle helpers
+  function toggleSet(setter) {
+    return (key, on) => {
+      setter((prev) => {
+        const next = new Set(prev)
+        if (on) next.add(key)
+        else next.delete(key)
+        return next
+      })
     }
   }
 
-  function highlight(){
-    const spans = [...filteredEntities].sort((a,b)=> a.start - b.start || b.end - a.end)
+  // Safe HTML escape for highlighter
+  function escapeHTML(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  }
+
+  // Render highlighted text using entity spans
+  function highlight() {
+    const spans = [...filteredEntities].sort((a, b) => a.start - b.start || b.end - a.end)
     let out = ''
     let cursor = 0
-    for(const s of spans){
-      if(s.start < cursor) continue
+    for (const s of spans) {
+      if (s.start < cursor) continue // skip overlaps
       out += escapeHTML(text.slice(cursor, s.start))
-      out += `<span class="entity tag-${s.type}" title="${s.type}">${escapeHTML(text.slice(s.start, s.end))}</span>`
+      out += `<span class="entity tag-${s.type}" title="${s.type}">${escapeHTML(
+        text.slice(s.start, s.end)
+      )}</span>`
       cursor = s.end
     }
     out += escapeHTML(text.slice(cursor))
-    return {__html: out || '<em class="muted">(No text)</em>'}
+    return { __html: out || '<em class="muted">(No text)</em>' }
   }
 
-  function escapeHTML(s){
-    return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
-  }
-
-  async function doUpload(ev){
+  // Batch upload
+  async function doUpload(ev) {
     const files = ev.target.files
-    if(!files?.length) return
-    const data = await uploadFiles(files)
-    setBatch(data) // store results from /upload
+    if (!files?.length) return
+    const data = await uploadFiles(files, {
+      use_ml: useML,
+      entity_types: Array.from(selectedE),
+      event_types: Array.from(selectedEv)
+    })
+    setBatch(data)
   }
 
-  async function downloadEntities(){
+  // CSV exports
+  async function downloadEntities() {
     const blob = await exportEntities(entities)
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href=url; a.download='entities.csv'; a.click(); URL.revokeObjectURL(url)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'entities.csv'
+    a.click()
+    URL.revokeObjectURL(url)
   }
-  async function downloadEvents(){
+  async function downloadEvents() {
     const blob = await exportEvents(events)
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href=url; a.download='events.csv'; a.click(); URL.revokeObjectURL(url)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'events.csv'
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
-  function loadBatchFile(idx){
+  // Load selected batch file into viewer
+  function loadBatchFile(idx) {
     const f = batch.files[idx]
-    if(!f) return
+    if (!f) return
     setText(f.text || '')
     setEntities(f.entities || [])
     setEvents(f.events || [])
     setAnalytics(f.analytics || {})
-    setTimeout(()=>document.querySelector('.highlighted')?.scrollIntoView({behavior:'smooth', block:'start'}), 0)
+    setTimeout(
+      () => document.querySelector('.highlighted')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      0
+    )
   }
 
-  function entityCountSum(analytics){
-    if(!analytics || !analytics.entity_counts) return 0
-    return Object.values(analytics.entity_counts).reduce((a,b)=>a+b,0)
+  function entityCountSum(a) {
+    if (!a || !a.entity_counts) return 0
+    return Object.values(a.entity_counts).reduce((x, y) => x + y, 0)
   }
 
   return (
     <div>
       <header>
         <h1>Healthcare NER & Event Extraction</h1>
-        <p className="muted">UI· Rule-based backend </p>
+        <span className="badge">
+          Data: {sourceInfo.name}
+          {sourceInfo.extra ? ` / ${sourceInfo.extra}` : ''} — {sourceInfo.count} notes
+        </span>
+        <p className="muted">
+          React UI · Rule-based backend · Edit rules in <code>backend/rules/healthcare_rules.yml</code>
+        </p>
       </header>
 
       <main className="grid">
+        {/* LEFT: Controls */}
         <section className="card">
           <h2>Input</h2>
+
+          {/* Demo notes */}
           <div className="row">
             <label htmlFor="noteSelect">Load demo note:</label>
-            <select id="noteSelect" value={noteIdx} onChange={e=>setNoteIdx(+e.target.value)}>
-              {dataset.map((d,i)=>(<option key={i} value={i}>{i+1}. {d.title}</option>))}
+            <select id="noteSelect" value={noteIdx} onChange={(e) => setNoteIdx(+e.target.value)}>
+              {dataset.map((d, i) => (
+                <option key={i} value={i}>
+                  {i + 1}. {d.title}
+                </option>
+              ))}
             </select>
-            <button onClick={()=> setText(dataset[noteIdx]?.text || '')}>Load</button>
+            <button
+              onClick={() => {
+                setText(dataset[noteIdx]?.text || '')
+                setSourceInfo((si) => ({ ...si, name: 'demo', extra: '', count: 1 }))
+              }}
+            >
+              Load
+            </button>
           </div>
 
-          <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Paste clinical note or type here..." />
+          {/* MTSamples controls */}
+          <div className="row">
+            <label>MT Specialty:</label>
+            <select value={chosenSpec} onChange={(e) => setChosenSpec(e.target.value)}>
+              <option value="">(All specialties)</option>
+              {mtSpecialties.map((s, i) => (
+                <option key={i} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            <button
+              className="ghost"
+              onClick={async () => {
+                try {
+                  const d = await getMTSpecialties()
+                  setMtSpecialties(d.specialties || [])
+                } catch (e) {
+                  alert(e.message)
+                }
+              }}
+            >
+              Refresh List
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  const q = chosenSpec ? { specialty: chosenSpec } : {}
+                  const items = await getMTNotes(10, q)
+                  setDataset(items)
+                  setNoteIdx(0)
+                  if (items[0]?.text) setText(items[0].text)
+                  setSourceInfo({ name: 'MTSamples', extra: chosenSpec || 'All', count: items.length })
+                } catch (e) {
+                  alert(`MTSamples load error: ${e.message}`)
+                }
+              }}
+            >
+              Load MTSamples
+            </button>
+          </div>
+
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Paste clinical note or load MTSamples…"
+          />
 
           <h3>Entity Types</h3>
           <Chipbar items={E_TYPES} selected={selectedE} onToggle={toggleSet(setSelectedE)} />
@@ -129,8 +279,16 @@ function App(){
           <h3>Event Types</h3>
           <Chipbar items={EVENT_TYPES} selected={selectedEv} onToggle={toggleSet(setSelectedEv)} />
 
+          <h3>Options</h3>
+          <label className="chip">
+            <input type="checkbox" checked={useML} onChange={(e) => setUseML(e.target.checked)} /> Use ML stage (if
+            installed)
+          </label>
+
           <div className="row">
-            <button onClick={()=> setText('') } className="ghost">Clear</button>
+            <button onClick={() => setText('')} className="ghost">
+              Clear
+            </button>
           </div>
 
           <h3>Batch Upload (.txt)</h3>
@@ -156,7 +314,9 @@ function App(){
                       <td>{f.file}</td>
                       <td>{entityCountSum(f.analytics)}</td>
                       <td>{Object.values(f.analytics?.event_counts || {}).reduce((a, b) => a + b, 0)}</td>
-                      <td><button onClick={() => loadBatchFile(i)}>Load to Viewer</button></td>
+                      <td>
+                        <button onClick={() => loadBatchFile(i)}>Load to Viewer</button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -165,6 +325,7 @@ function App(){
           )}
         </section>
 
+        {/* RIGHT: Output */}
         <section className="card">
           <h2>Highlighted Text</h2>
           <div className="highlighted" dangerouslySetInnerHTML={highlight()} />
@@ -178,10 +339,22 @@ function App(){
             <div>
               <h3>Entities</h3>
               <table>
-                <thead><tr><th>Type</th><th>Text</th><th>Pos</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Text</th>
+                    <th>Pos</th>
+                  </tr>
+                </thead>
                 <tbody>
-                  {filteredEntities.map((e,i)=>(
-                    <tr key={i}><td>{e.type}</td><td>{e.text}</td><td>{e.start}-{e.end}</td></tr>
+                  {filteredEntities.map((e, i) => (
+                    <tr key={i}>
+                      <td>{e.type}</td>
+                      <td>{e.text}</td>
+                      <td>
+                        {e.start}-{e.end}
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -189,11 +362,25 @@ function App(){
             <div>
               <h3>Events</h3>
               <table>
-                <thead><tr><th>Type</th><th>Trigger</th><th>Arguments</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Trigger</th>
+                    <th>Arguments</th>
+                  </tr>
+                </thead>
                 <tbody>
-                  {filteredEvents.map((ev,i)=>{
-                    const args = Object.entries(ev.arguments||{}).map(([k,v])=>`${k}: ${v}`).join(', ')
-                    return (<tr key={i}><td>{ev.type}</td><td>{ev.trigger}</td><td>{args}</td></tr>)
+                  {filteredEvents.map((ev, i) => {
+                    const args = Object.entries(ev.arguments || {})
+                      .map(([k, v]) => `${k}: ${v}`)
+                      .join(', ')
+                    return (
+                      <tr key={i}>
+                        <td>{ev.type}</td>
+                        <td>{ev.trigger}</td>
+                        <td>{args}</td>
+                      </tr>
+                    )
                   })}
                 </tbody>
               </table>

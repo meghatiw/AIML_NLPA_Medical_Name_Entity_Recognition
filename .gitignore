@@ -1,66 +1,9 @@
-# ---- Node / React ----
 node_modules/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-.pnpm-debug.log*
-.vite/
-.cache/
-coverage/
-.eslintcache
-.stylelintcache
-
-# Vite / Build outputs
-dist/
-build/
-
-# React app specific (adjust if you renamed the folder)
-frontend-react/node_modules/
 frontend-react/dist/
-
-# ---- Python / Flask ----
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-*.so
-.pytest_cache/
-.mypy_cache/
-.coverage
-htmlcov/
-.eggs/
-*.egg-info/
-.cache/
-
-# Virtual environments (root or backend-local)
 .venv/
-venv/
 env/
 backend/.venv/
-backend/venv/
-backend/env/
-
-# Flask instance / local db (optional)
-instance/
-*.sqlite3
-
-# ---- Environment / secrets ----
 .env
-.env.*
-.env.local
-.env.*.local
-
-# ---- OS / Editor junk ----
 .DS_Store
-Thumbs.db
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# ---- Temp / misc ----
-tmp/
-*.tmp
-*.bak

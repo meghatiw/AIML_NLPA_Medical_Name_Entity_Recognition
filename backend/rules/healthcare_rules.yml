@@ -6,15 +6,21 @@ entities:
   GENDERS: ["male", "female", "man", "woman"]
 
   DISEASES:
+    - diabetes
     - diabetes mellitus
-    - hypertension
+    - obesity
+    - overweight
     - coronary artery disease
+    - hypertension
     - copd
     - pneumonia
-    - tuberculosis
     - asthma
     - chronic kidney disease
     - anemia
+    - hypoglycemia
+    - hyperglycemia
+    - depression
+    - anxiety
 
   SYMPTOMS:
     - fever
@@ -25,15 +31,53 @@ entities:
     - vomiting
     - shortness of breath
     - fatigue
+    - weight loss
+    - dizziness
+    - weakness
 
   MEDICATIONS:
+    -  # analgesics / antipyretics / GI / cardio you already had
     - paracetamol
+    - acetaminophen
     - ibuprofen
     - metformin
+    - glucophage
     - insulin
     - amoxicillin
     - atorvastatin
     - omeprazole
+    - aspirin
+    - statin
+    - lisinopril
+    - metoprolol
+
+    # *** Allergy / ENT brands (requested) ***
+    - Claritin         # loratadine
+    - Zyrtec           # cetirizine
+    - Allegra          # fexofenadine
+    - Nasonex          # mometasone furoate nasal spray
+    - Flonase          # fluticasone nasal spray
+    - Nasacort         # triamcinolone nasal spray
+
+    # generics for the brands above
+    - loratadine
+    - cetirizine
+    - fexofenadine
+    - mometasone
+    - fluticasone
+    - triamcinolone
+
+    # oral contraceptive from the note
+    - Ortho Tri-Cyclen
+    - Ortho Tri Cyclen
+    - Ortho-Cyclen
+    - Ortho Cyclen
+    - Tri-Cyclen
+    - Ortho Tri-Cyclen Lo
+
+    # dosage forms you want treated as meds in notes
+    - nasal spray
+    - nasal sprays
 
   PROCEDURES:
     - angioplasty
@@ -48,13 +92,42 @@ entities:
     - chemotherapy
     - radiation therapy
     - insulin therapy
+    - lifestyle modification
+    - diet
+    - exercise
 
   LAB_TESTS:
     - hemoglobin
     - creatinine
     - blood urea nitrogen
     - chest x-ray
+    - cxr
     - ecg
+    - a1c
+    - hba1c
+    - blood glucose
+    - glucose
+
+  PROGRAMS:
+    - overeaters anonymous
+
+  VITAL_SIGNS:
+    - blood pressure
+    - pulse
+    - heart rate
+    - respiratory rate
+    - temperature
+    - bmi
+    - weight
+
+  MEASUREMENT_UNITS:
+    - pounds
+    - lbs
+    - lb
+    - kg
+    - kilograms
+    - mg/dl
+    - mg/dl.
 
 patterns:
   AGE: "\\b(?:age\\s*[:=]?\\s*)?(\\d{1,3})\\s*(?:years?|yrs?|y/o)\\b"
@@ -62,6 +135,9 @@ patterns:
   FREQUENCY: "\\b(?:once daily|twice daily|bd|tid|qid|q\\d+h|every \\d+ hours)\\b"
   ROUTE: "\\b(?:po|iv|im|sc|subcut|oral|intravenous|intramuscular|subcutaneous)\\b"
   DATE: "\\b(?:\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\s+\\d{1,2},\\s*\\d{4})\\b"
+  WEIGHT: "\\b(?:weight|wt)\\s*(?:today\\s*)?(?:is|:)?\\s*(\\d{2,3})(?:\\s*(?:pounds?|lbs?|lb|kg|kilograms?))\\b"
+  BP: "\\b(?:blood\\s*pressure|bp)\\s*(?:is|:)?\\s*(\\d{2,3})\\s*/\\s*(\\d{2,3})\\b"
+  GLUCOSE: "\\b(?:glucose|blood\\s*sugar|bg)\\s*(?:is|:)?\\s*(\\d{2,3})(?:\\s*mg/?dL)?\\b"
 
 events:
   MedicationAdministration:
