@@ -107,7 +107,7 @@ function App(){
     <div>
       <header>
         <h1>Healthcare NER & Event Extraction</h1>
-        <p className="muted">UI· Rule-based backend · Edit rules in <code>backend/rules/healthcare_rules.yml</code></p>
+        <p className="muted">UI· Rule-based backend </p>
       </header>
 
       <main className="grid">

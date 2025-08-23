@@ -1,35 +1,126 @@
+
 :root{
-  --bg:#0f172a; --card:#111827; --muted:#94a3b8; --text:#e2e8f0; --accent:#22d3ee;
-  --chip:#1f2937; --chipOn:#0ea5e9; --border:#374151;
-  --tag-patient:#a78bfa; --tag-med:#34d399; --tag-dis:#f472b6; --tag-trt:#f59e0b; --tag-proc:#60a5fa; --tag-sym:#ef4444; --tag-lab:#f97316; --tag-age:#fbbf24; --tag-dose:#10b981; --tag-route:#22c55e; --tag-freq:#06b6d4; --tag-date:#93c5fd;
+  /* Light theme */
+  --bg:#ffffff; 
+  --card:#ffffff; 
+  --muted:#475569; 
+  --text:#111827; 
+  --accent:#0072B2;          /* Okabe–Ito blue */
+  --border:#e5e7eb;
+
+  /* Okabe–Ito colorblind-safe palette */
+  --c-blue:#0072B2;
+  --c-orange:#E69F00;
+  --c-green:#009E73;
+  --c-pink:#CC79A7;
+  --c-brown:#A6761D;
+  --c-yellow:#F0E442;
+  --c-sky:#56B4E9;
+  --c-red:#D55E00;
+  --c-black:#000000;
 }
+
 *{box-sizing:border-box}
 html,body,#root{height:100%}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+html,body{
+  margin:0;padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+}
 header,footer{padding:16px 24px}
 header h1{margin:0 0 6px 0}
 .muted{color:var(--muted)}
 main.grid{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;padding:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 0 0 1px rgba(255,255,255,0.02) inset}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04);
+}
 .row{display:flex;gap:8px;align-items:center;margin:8px 0}
 .row.spaced{justify-content:space-between}
-textarea{width:100%;height:180px;background:#0b1020;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:14px}
-button{background:var(--accent);color:#05222a;border:none;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
-button.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-select, input[type=file]{background:#0b1020;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:8px}
-.highlighted{min-height:180px;background:#0b1020;border:1px dashed var(--border);border-radius:8px;padding:12px;white-space:pre-wrap;word-wrap:break-word}
-.entity{padding:2px 4px;border-radius:6px}
-.tag-PATIENT{background:var(--tag-patient)}
-.tag-MEDICATION{background:var(--tag-med)}
-.tag-DISEASE{background:var(--tag-dis)}
-.tag-TREATMENT{background:var(--tag-trt)}
-.tag-PROCEDURE{background:var(--tag-proc)}
-.tag-SYMPTOM{background:var(--tag-sym)}
-.tag-LAB_TEST{background:var(--tag-lab)}
-.tag-AGE{background:var(--tag-age)}
-.tag-DOSAGE{background:var(--tag-dose)}
-.tag-ROUTE{background:var(--tag-route)}
-.tag-FREQUENCY{background:var(--tag-freq)}
-.tag-DATE{background:var(--tag-date)}
+textarea{
+  width:100%;
+  height:180px;
+  background:#ffffff;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px;
+  font-size:14px
+}
+button{
+  background:var(--accent);
+  color:#ffffff;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer
+}
+button:hover{filter:brightness(0.95)}
+button.ghost{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted)
+}
+select, input[type=file]{
+  background:#ffffff;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px
+}
+.highlighted{
+  min-height:180px;
+  background:#ffffff;
+  border:1px dashed var(--border);
+  border-radius:8px;
+  padding:12px;
+  white-space:pre-wrap;
+  word-wrap:break-word
+}
+.entity{
+  padding:2px 4px;
+  border-radius:4px;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+  border:1px solid rgba(0,0,0,0.08);
+  /* extra affordance for colorblind users */
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  color:#000000;
+}
+
+.tag-PATIENT{ background: #e3e2ff; border-color: #b7b4ff; text-decoration-color:#b7b4ff }
+.tag-MEDICATION{ background: #e3f5ef; border-color: var(--c-green); text-decoration-color: var(--c-green) }
+.tag-DISEASE{ background: #e9f2fb; border-color: var(--c-blue); text-decoration-color: var(--c-blue) }
+.tag-TREATMENT{ background: #fff4e5; border-color: var(--c-orange); text-decoration-color: var(--c-orange) }
+.tag-PROCEDURE{ background: #f7eafe; border-color: var(--c-pink); text-decoration-color: var(--c-pink) }
+.tag-SYMPTOM{ background: #fff0e8; border-color: var(--c-red); text-decoration-color: var(--c-red) }
+.tag-LAB_TEST{ background: #eaf6fd; border-color: var(--c-sky); text-decoration-color: var(--c-sky) }
+.tag-AGE{ background: #fef9e6; border-color: var(--c-yellow); text-decoration-color: #8d7f00 }
+.tag-DOSAGE{ background: #e3f5ef; border-color: var(--c-green); text-decoration-color: var(--c-green) }
+.tag-ROUTE{ background: #eaf6fd; border-color: var(--c-sky); text-decoration-color: var(--c-sky) }
+.tag-FREQUENCY{ background: #fff4e5; border-color: var(--c-orange); text-decoration-color: var(--c-orange) }
+.tag-DATE{ background: #ececec; border-color: #bdbdbd; text-decoration-color: #666 }
+
+.chipbar{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px 0}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#f7f7f7;border:1px solid var(--border);
+  padding:6px 10px;border-radius:999px;color:var(--text)
+}
+.chip input{accent-color:var(--accent)}
+.chip.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,114,178,0.15)}
+
+table{width:100%;border-collapse:collapse;margin-top:6px}
+th, td{border-top:1px solid var(--border);padding:8px 6px;text-align:left;font-size:14px}
+thead th{border-top:none;color:#0f172a}
+tbody tr:hover{background:#fafafa}
+
 ul{margin:6px 0 0 18px}
 @media (max-width: 960px){ main.grid{grid-template-columns:1fr} }
