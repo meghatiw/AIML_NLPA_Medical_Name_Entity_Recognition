@@ -30,11 +30,54 @@ MTSAMPLES_CSV_PATH = os.getenv(
 app = Flask(__name__)
 
 # ---------------- Rules ----------------
+def _fallback_rules():
+    """Tiny safe fallback so the app never returns zero due to YAML problems."""
+    return {
+        "flags": {"ignore_case": True},
+        "entities": {
+            "DISEASES": ["diabetes", "hypertension", "pneumonia", "asthma", "anemia"],
+            "MEDICATIONS": ["amoxicillin", "metformin", "insulin", "aspirin", "atorvastatin"],
+            "LAB_TESTS": ["ecg", "chest x-ray", "a1c", "glucose"],
+        },
+        "patterns": {
+            "AGE": r"\b(?:(?:age\s*[:=]?\s*)?(\d{1,3})\s*(?:years?|yrs?|yr|y\.?/?o\.?|yo|years?\s*old|year\s*old)|aged\s*(\d{1,3})|(\d{1,3})\s*[- ]?year[- ]?old)\b",
+            "DATE": r"\b(?:\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},\s*\d{4})\b",
+            "WEIGHT": r"\b(?:weight|wt)\s*(?:today\s*)?(?:is|was|=|:|measured\s+at|of)?\s*(\d{2,3})\s*(?:pounds?|lbs?|lb|kg|kilograms?)\b",
+            "BP": r"\b(?:blood\s*pressure|bp)\s*(?:is|was|=|:)?\s*(\d{2,3})\s*/\s*(\d{2,3})\b",
+            "DOSAGE": r"\b(\d+(?:\.\d+)?)\s*(mg|g|ml|units)\b",
+        }
+    }
+
 def load_rules():
+    """Load YAML rules and optionally extend MEDICATIONS from rules/medications_extra.txt."""
+    rules = {}
     if yaml is None:
-        raise RuntimeError("pyyaml is not installed. Run: pip install -r requirements.txt")
-    with open(RULES_PATH, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f) or {}
+        print("[rules] PyYAML missing – using fallback rules.")
+        return _fallback_rules()
+
+    try:
+        with open(RULES_PATH, 'r', encoding='utf-8') as f:
+            rules = yaml.safe_load(f) or {}
+    except Exception as e:
+        print(f"[rules] ERROR reading {RULES_PATH}: {e} – using fallback rules.")
+        return _fallback_rules()
+
+    # ensure structure
+    rules.setdefault("flags", {}).setdefault("ignore_case", True)
+    rules.setdefault("entities", {})
+    rules.setdefault("patterns", {})
+
+    # OPTIONAL: merge extra medications from text file (one per line)
+    extra = os.path.join(APP_ROOT, 'rules', 'medications_extra.txt')
+    if os.path.exists(extra):
+        meds = rules["entities"].setdefault("MEDICATIONS", [])
+        try:
+            with open(extra, encoding='utf-8') as f:
+                meds.extend([l.strip() for l in f if l.strip()])
+        except Exception as e:
+            print(f"[rules] WARN reading medications_extra.txt: {e}")
+
+    return rules
 
 def rules_hash():
     try:
@@ -45,46 +88,100 @@ def rules_hash():
 
 # --------------- Regex helpers ---------------
 def _rx_from_words(words, ignore_case=True):
-    words = [w for w in (words or []) if w]
-    if not words: return None
-    words = sorted(set(words), key=lambda x: -len(x))  # longest first
-    patt = r"\b(?:" + "|".join(re.escape(w) for w in words) + r")\b"
-    return re.compile(patt, re.IGNORECASE if ignore_case else 0)
+    """
+    Build a robust regex for a list of phrases:
+    - tolerant to multiple spaces (e.g., 'Ortho  Tri  Cyclen')
+    - tolerant to hyphen/en-dash variants ( - – — ‐ - ─ )
+    - anchored with custom lookarounds so punctuation like commas/periods doesn't block a match
+    """
+    tokens = [str(w).strip() for w in (words or []) if str(w).strip()]
+    if not tokens:
+        return None
+
+    def esc_phrase(p):
+        # Escape, then allow any Unicode dash between parts, and flexible spaces
+        s = re.escape(p)
+        # allow any run of whitespace where a single space appears in the phrase
+        s = s.replace(r'\ ', r'\s+')
+        # allow multiple dash codepoints where a hyphen appears in the phrase
+        s = s.replace(r'\-', r'[-\u2010-\u2015\u2212]')
+        return s
+
+    # longest first to prefer longer phrases
+    tokens = sorted(set(tokens), key=lambda x: -len(x))
+    patt = r"(?<![A-Za-z0-9])(?:" + "|".join(esc_phrase(t) for t in tokens) + r")(?![A-Za-z0-9])"
+    flags = re.UNICODE | (re.IGNORECASE if ignore_case else 0)
+    return re.compile(patt, flags)
 
 def _rx_compile(patt, ignore_case=True):
-    if not patt: return None
+    if not patt:
+        return None
     return re.compile(patt, re.IGNORECASE if ignore_case else 0)
 
 # --------------- Extraction core ---------------
+LABEL_MAP = {
+    # map dictionary names → UI labels
+    "PATIENT_TITLES": "PATIENT",
+    "GENDERS": "PATIENT",                # treat gender tokens as PATIENT context if you wish
+    "DISEASES": "DISEASE",
+    "SYMPTOMS": "SYMPTOM",
+    "MEDICATIONS": "MEDICATION",
+    "PROCEDURES": "PROCEDURE",
+    "TREATMENTS": "TREATMENT",
+    "LAB_TESTS": "LAB_TEST",
+    "PROGRAMS": "PROGRAM",
+    "VITAL_SIGNS": "VITAL_SIGN",
+    "MEASUREMENT_UNITS": "MEASUREMENT_UNIT",
+}
+
 def extract_entities(text, rules):
     """
     Auto-discovers all dictionaries under rules['entities'] and all regexes under rules['patterns'].
+    Adds simple negation detection for DISEASE (no/denies/negative for/no evidence of/rule out).
+    Scans patterns BEFORE dictionaries so longer spans win.
     """
     E = []
     ignore_case = (rules.get('flags') or {}).get('ignore_case', True)
     ents = (rules.get('entities') or {})
     pats = (rules.get('patterns') or {})
 
-    dict_res = {k: _rx_from_words(v, ignore_case) for k, v in ents.items()}
-    patt_res = {k: _rx_compile(v, ignore_case) for k, v in pats.items()}
+    dict_res = {}
+    for k, v in ents.items():
+        rx = _rx_from_words(v, ignore_case)
+        if rx:
+            dict_res[k] = rx
+
+    patt_res = {}
+    for k, v in pats.items():
+        rx = _rx_compile(v, ignore_case)
+        if rx:
+            patt_res[k] = rx
+
+    NEG_CUES = re.compile(
+        r"\b(?:no|denies|denied|without|negative for|no evidence of|rule out|r/o)\b",
+        re.IGNORECASE
+    )
 
     def push(_type, m):
-        E.append({'type': _type, 'text': m.group(0), 'start': m.start(), 'end': m.end()})
+        ent = {'type': _type, 'text': m.group(0), 'start': m.start(), 'end': m.end()}
+        if _type.upper() == 'DISEASE':
+            left = text[max(0, ent['start'] - 60): ent['start']]
+            if NEG_CUES.search(left):
+                ent['negated'] = True
+        E.append(ent)
 
-    # dictionaries
-    for key, rx in dict_res.items():
-        if not rx: continue
-        label = key[:-1] if key.endswith('S') else key  # MEDICATIONS -> MEDICATION
-        for m in rx.finditer(text):
-            push(label, m)
-
-    # patterns (AGE/DATE/WEIGHT/BP/GLUCOSE…)
+    # 1) patterns first (DATE/AGE/WEIGHT/BP/… and maybe DISEASE if you added a disease regex)
     for key, rx in patt_res.items():
-        if not rx: continue
         for m in rx.finditer(text):
             push(key, m)
 
-    # merge overlaps: prefer longer span
+    # 2) dictionaries (normalize labels so UI filters match)
+    for key, rx in dict_res.items():
+        label = LABEL_MAP.get(key, key[:-1] if key.endswith('S') else key)
+        for m in rx.finditer(text):
+            push(label, m)
+
+    # 3) merge overlaps (prefer earlier + longer)
     E.sort(key=lambda x: (x['start'], -(x['end'] - x['start'])))
     merged, last_end = [], -1
     for e in E:
@@ -110,20 +207,20 @@ def extract_events(text, rules, entities=None, wanted_types=None, window=100):
         if wanted_types and ev_type not in wanted_types:
             continue
         trig_words = cfg.get('triggers', [])
-        if not trig_words: continue
+        if not trig_words:
+            continue
         trig_re = re.compile(r"\b(?:" + "|".join(re.escape(t) for t in trig_words) + r")\b", flags)
         for m in trig_re.finditer(text):
             nearby = ents_near(m.start())
             args = {}
             for role, ref in (cfg.get('args') or {}).items():
                 if isinstance(ref, str) and ref.startswith('@'):
-                    key = ref[1:]                # e.g. MEDICATIONS
-                    label = key[:-1] if key.endswith('S') else key
+                    key = ref[1:]
+                    label = LABEL_MAP.get(key, key[:-1] if key.endswith('S') else key)
                     for cand in sorted(nearby, key=lambda e: abs((e['start']+e['end'])/2 - m.start())):
                         if cand['type'].upper() == label.upper():
                             args[role] = cand['text']; break
-            out.append({'type': ev_type, 'trigger': m.group(0), 'start': m.start(),
-                        'end': m.end(), 'arguments': args})
+            out.append({'type': ev_type,'trigger': m.group(0),'start': m.start(),'end': m.end(),'arguments': args})
     return out
 
 def analyze(entities, events):
@@ -138,7 +235,8 @@ HF_MODEL_NAME = "d4data/biomedical-ner-all"
 _hf_pipe = None
 def ml_ready():
     global _hf_pipe
-    if not HF_AVAILABLE: return False
+    if not HF_AVAILABLE:
+        return False
     if _hf_pipe is None:
         try:
             tok = AutoTokenizer.from_pretrained(HF_MODEL_NAME)
@@ -147,8 +245,10 @@ def ml_ready():
         except Exception:
             return False
     return True
+
 def ml_entities(text):
-    if not ml_ready(): return []
+    if not ml_ready():
+        return []
     MAP = {"DISEASE":"DISEASE","CHEMICAL":"MEDICATION","DRUG":"MEDICATION","MED":"MEDICATION",
            "SYMPTOM":"SYMPTOM","TEST":"LAB_TEST","PROC":"PROCEDURE"}
     spans = _hf_pipe(text); out=[]
@@ -175,7 +275,8 @@ def _download_mtsamples_to_disk():
 
 def _ensure_mtsamples_loaded():
     global _MTSAMPLES_CACHE, _MTSAMPLES_SPECIALTIES
-    if _MTSAMPLES_CACHE is not None: return
+    if _MTSAMPLES_CACHE is not None:
+        return
     _download_mtsamples_to_disk()
     with open(MTSAMPLES_CSV_PATH, 'r', encoding='utf-8', errors='ignore', newline='') as f:
         reader = csv.DictReader(f)
@@ -184,9 +285,11 @@ def _ensure_mtsamples_loaded():
             spec = (row.get('medical_specialty') or row.get('specialty') or '').strip()
             title = (row.get('sample_name') or row.get('title') or '').strip() or f"Note {i+1}"
             trans = (row.get('transcription') or row.get('clean_text') or row.get('text') or '').strip()
-            if not trans: continue
+            if not trans:
+                continue
             rows.append({'title': f"{title} — {spec}" if spec else title, 'text': trans, 'specialty': spec})
-            if spec: specs.add(spec)
+            if spec:
+                specs.add(spec)
         _MTSAMPLES_CACHE = rows
         _MTSAMPLES_SPECIALTIES = sorted(specs)
 
@@ -217,6 +320,19 @@ def rules_debug():
         "pattern_names": sorted(list((r.get("patterns") or {}).keys()))
     })
 
+@app.get("/health")
+def health():
+    """Quick sanity: shows counts after loading rules and extracting from demo text."""
+    try:
+        with open(DATASET_PATH,'r',encoding='utf-8') as f: ds=json.load(f)
+        sample = (ds or [{}])[0].get("text","")
+    except Exception:
+        sample = "Patient with diabetes and hypertension. BP 140/90. Started on metformin 500 mg."
+    r = load_rules()
+    ents = extract_entities(sample, r)
+    evs = extract_events(sample, r, ents)
+    return jsonify({"ok": True, "entities": len(ents), "events": len(evs)})
+
 @app.get("/mtsamples/specialties")
 def mtsamples_specialties():
     _ensure_mtsamples_loaded()
@@ -240,15 +356,16 @@ def api_extract():
     use_ml = bool(data.get('use_ml', False))
     rules = load_rules()
 
-    ents = extract_entities(text, rules)     # UI filters are client-side only
+    ents = extract_entities(text, rules)
     if use_ml:
         try:
             ents = sorted(ents + ml_entities(text), key=lambda x: (x['start'], -(x['end']-x['start'])))
-            # de-overlap simple
             merged, last = [], -1
             for e in ents:
-                if not merged: merged.append(e); last = e['end']; continue
-                if e['start'] < last: continue
+                if not merged:
+                    merged.append(e); last = e['end']; continue
+                if e['start'] < last:
+                    continue
                 merged.append(e); last = e['end']
             ents = merged
         except Exception:
@@ -261,11 +378,13 @@ def api_extract():
 def api_upload():
     use_ml = request.form.get('use_ml', '0') in ('1','true','True')
     files = request.files.getlist('files')
-    bundle, all_e, all_v = [], [], []
+    bundle = []
     for f in files:
         raw = f.read()
-        try: text = raw.decode('utf-8', errors='ignore')
-        except Exception: text = raw.decode('latin-1', errors='ignore')
+        try:
+            text = raw.decode('utf-8', errors='ignore')
+        except Exception:
+            text = raw.decode('latin-1', errors='ignore')
         rules = load_rules()
         ents = extract_entities(text, rules)
         if use_ml:
@@ -273,18 +392,19 @@ def api_upload():
                 ents = sorted(ents + ml_entities(text), key=lambda x: (x['start'], -(x['end']-x['start'])))
                 merged, last = [], -1
                 for e in ents:
-                    if not merged: merged.append(e); last = e['end']; continue
-                    if e['start'] < last: continue
+                    if not merged:
+                        merged.append(e); last = e['end']; continue
+                    if e['start'] < last:
+                        continue
                     merged.append(e); last = e['end']
                 ents = merged
-            except Exception: pass
+            except Exception:
+                pass
         evs = extract_events(text, rules, entities=ents)
 
         from collections import Counter
         an = {"entity_counts": dict(Counter(e['type'] for e in ents)),
               "event_counts": dict(Counter(e['type'] for e in evs))}
-        all_e.extend([{**e, 'file': f.filename} for e in ents])
-        all_v.extend([{**v, 'file': f.filename} for v in evs])
         bundle.append({'file': f.filename, 'text': text, 'entities': ents, 'events': evs, 'analytics': an})
 
     return jsonify({'files': bundle, 'totals': {}})
