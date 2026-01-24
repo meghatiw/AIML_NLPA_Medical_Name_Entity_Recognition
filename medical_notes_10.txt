@@ -1,0 +1,38 @@
+### Note 1 — Pneumonia (OPD)
+Pt. Singh (male, age 34 yrs) reports fever and cough since 4 days. Chest X-ray suggests pneumonia. Diagnosed with pneumonia on 22/08/2025. Prescribed amoxicillin 500 mg tid po for 7 days. Follow-up on Aug 25, 2025.
+
+---
+### Note 2 — ER Chest Pain (CAD)
+Patient Mr. Verma, 62 years old male, presented with chest pain on 22/08/2025. ECG abnormal. Diagnosed with coronary artery disease. He was started on atorvastatin 40 mg once daily. Admitted on 22/08/2025; discharged on 24/08/2025.
+
+---
+### Note 3 — Diabetes & Hypertension Management
+Assessment: diabetes mellitus and hypertension. Age 55 years. Started on metformin 500 mg bd and insulin 10 units sc at night. Creatinine recheck on Aug 30, 2025. Admitted on 20/08/2025; discharged on 22/08/2025.
+
+---
+### Note 4 — COPD Exacerbation
+Pt. Rao (age 68 yrs) with shortness of breath and fatigue. Diagnosed with copd on 21/08/2025. Given paracetamol 650 mg q8h po for associated headache. Chest X-ray ordered; review on Aug 28, 2025.
+
+---
+### Note 5 — Anemia Workup
+Ms. Meera, age 29 years, complains of fatigue and headache. Hemoglobin low on labs; diagnosed with anemia. Underwent biopsy on 21/08/2025. Advised follow-up on Aug 29, 2025.
+
+---
+### Note 6 — CKD on Dialysis
+Pt. Kulkarni, 58 years, with chronic kidney disease presented for routine care. Creatinine elevated; blood urea nitrogen reviewed. Underwent dialysis on Aug 20, 2025; next session planned 24/08/2025.
+
+---
+### Note 7 — Asthma (OPD)
+Ms. Roy (age 31 yrs) with shortness of breath and cough. Diagnosed with asthma. Given ibuprofen 200 mg qid po for chest pain. Physiotherapy advised. Review on Aug 26, 2025.
+
+---
+### Note 8 — Community Pneumonia (Inpatient)
+Patient Mr. Das, age 47 years, admitted on 18/08/2025 with fever and cough. Chest X-ray suggests pneumonia. Started on amoxicillin 500 mg tid po. Discharged on 21/08/2025; follow-up ECG due to chest pain complaints.
+
+---
+### Note 9 — Tuberculosis — Initial Visit
+Patient Ms. Rani, age 36 yrs, with cough and fatigue. Chest X-ray abnormal; diagnosed with tuberculosis on 22/08/2025. Given paracetamol 500 mg tid po for fever. Follow-up on Sep 05, 2025.
+
+---
+### Note 10 — Post-ACS Secondary Prevention
+Mr. Nair (age 64 years) with prior chest pain episode. ECG abnormal. Final diagnosis coronary artery disease. Started on atorvastatin 20 mg once daily and advised angioplasty discussion on Aug 27, 2025.

@@ -6,15 +6,213 @@ entities:
   GENDERS: ["male", "female", "man", "woman"]
 
   DISEASES:
+    - diabetes
+    - allergic rhinitis
+    - rhinitis
+    - allergy
+    - allergies
+    - asthma
+    - diabetes
     - diabetes mellitus
     - hypertension
     - coronary artery disease
+    - cad
     - copd
+    - chronic obstructive pulmonary disease
+    - sinusitis
+    - acute sinusitis
+    - chronic sinusitis
     - pneumonia
+    - bronchitis
+    - acute bronchitis
+    - chronic bronchitis
+    - influenza
+    - flu
+    - covid-19
+    - coronavirus disease 2019
     - tuberculosis
-    - asthma
-    - chronic kidney disease
+    - tb
+    - pulmonary embolism
+    - pe
+    - heart failure
+    - hf
+    - myocardial infarction
+    - mi
+    - heart attack
+    - angina
+    - arrhythmia
+    - atrial fibrillation
+    - af
+    - stroke
+    - cerebrovascular accident
+    - cva
+    - transient ischemic attack
+    - tia
+    - peripheral artery disease
+    - pad
+    - deep vein thrombosis
+    - dvt
+    - hyperlipidemia
+    - dyslipidemia
+    - hypercholesterolemia
+    - hypothyroidism
+    - hyperthyroidism
+    - obesity
+    - metabolic syndrome
+    - pcos
+    - pcod
+    - osteoporosis
+    - vitamin d deficiency
+    - iron deficiency anemia
     - anemia
+    - gout
+    - hyperuricemia
+    - gerd
+    - gastroesophageal reflux disease
+    - peptic ulcer disease
+    - pud
+    - gastritis
+    - gastroenteritis
+    - irritable bowel syndrome
+    - ibs
+    - inflammatory bowel disease
+    - ibd
+    - ulcerative colitis
+    - crohn's disease
+    - pancreatitis
+    - hepatitis b
+    - hepatitis c
+    - fatty liver disease
+    - nafld
+    - mafld
+    - gallstones
+    - cholelithiasis
+    - cholecystitis
+    - appendicitis
+    - hemorrhoids
+    - chronic kidney disease
+    - ckd
+    - acute kidney injury
+    - aki
+    - nephrolithiasis
+    - kidney stones
+    - urinary tract infection
+    - uti
+    - pyelonephritis
+    - glomerulonephritis
+    - benign prostatic hyperplasia
+    - bph
+    - prostatitis
+    - epilepsy
+    - seizure disorder
+    - migraine
+    - tension headache
+    - parkinson's disease
+    - alzheimer's disease
+    - dementia
+    - multiple sclerosis
+    - ms
+    - peripheral neuropathy
+    - trigeminal neuralgia
+    - bell's palsy
+    - sciatica
+    - depression
+    - major depressive disorder
+    - anxiety disorder
+    - generalized anxiety disorder
+    - bipolar disorder
+    - schizophrenia
+    - obsessive-compulsive disorder
+    - ocd
+    - post-traumatic stress disorder
+    - ptsd
+    - insomnia
+    - dengue
+    - malaria
+    - typhoid fever
+    - enteric fever
+    - chikungunya
+    - leptospirosis
+    - hiv infection
+    - hiv
+    - aids
+    - shingles
+    - herpes zoster
+    - chickenpox
+    - varicella
+    - measles
+    - mumps
+    - rubella
+    - endometriosis
+    - uterine fibroids
+    - leiomyoma
+    - pelvic inflammatory disease
+    - pid
+    - bacterial vaginosis
+    - vaginitis
+    - cervical cancer
+    - breast cancer
+    - lung cancer
+    - prostate cancer
+    - colorectal cancer
+    - colon cancer
+    - ovarian cancer
+    - gastric cancer
+    - stomach cancer
+    - liver cancer
+    - hepatocellular carcinoma
+    - pancreatic cancer
+    - leukemia
+    - lymphoma
+    - melanoma
+    - thyroid cancer
+    - eczema
+    - atopic dermatitis
+    - dermatitis
+    - psoriasis
+    - urticaria
+    - hives
+    - acne vulgaris
+    - cellulitis
+    - tinea
+    - ringworm
+    - dermatophytosis
+    - scabies
+    - vitiligo
+    - alopecia areata
+    - conjunctivitis
+    - pink eye
+    - cataract
+    - glaucoma
+    - diabetic retinopathy
+    - age-related macular degeneration
+    - amd
+    - tonsillitis
+    - pharyngitis
+    - streptococcal pharyngitis
+    - strep throat
+    - laryngitis
+    - otitis media
+    - otitis externa
+    - sepsis
+    - septic shock
+    - systemic lupus erythematosus
+    - sle
+    - rheumatoid arthritis
+    - ra
+    - ankylosing spondylitis
+    - sjogren syndrome
+    - celiac disease
+    - hashimoto thyroiditis
+    - graves disease
+    - myasthenia gravis
+    - sarcoidosis
+    - interstitial lung disease
+    - ild
+    - obstructive sleep apnea
+    - osa
+    - pleural effusion
+
 
   SYMPTOMS:
     - fever
@@ -25,15 +223,295 @@ entities:
     - vomiting
     - shortness of breath
     - fatigue
+    - weight loss
+    - dizziness
+    - weakness
+    - chills
+    - rigors
+    - night sweats
+    - malaise
+    - myalgia
+    - muscle pain
+    - arthralgia
+    - joint pain
+    - back pain
+    - neck pain
+    - sore throat
+    - throat pain
+    - rhinorrhea
+    - runny nose
+    - nasal congestion
+    - stuffy nose
+    - sneezing
+    - wheezing
+    - chest tightness
+    - palpitations
+    - syncope
+    - fainting
+    - near syncope
+    - dyspnea
+    - sob
+    - orthopnea
+    - paroxysmal nocturnal dyspnea
+    - hemoptysis
+    - productive cough
+    - dry cough
+    - sputum production
+    - pleuritic chest pain
+    - edema
+    - leg swelling
+    - pedal edema
+    - ankle swelling
+    - cyanosis
+    - pallor
+    - diaphoresis
+    - sweating
+    - flushing
+    - jaundice
+    - pruritus
+    - itching
+    - rash
+    - hives
+    - urticaria
+    - bruising
+    - petechiae
+    - purpura
+    - photosensitivity
+    - sun sensitivity
+    - hair loss
+    - alopecia
+    - eye pain
+    - red eye
+    - conjunctival redness
+    - blurred vision
+    - vision loss
+    - double vision
+    - diplopia
+    - photophobia
+    - phonophobia
+    - tearing
+    - eye discharge
+    - ear pain
+    - otalgia
+    - hearing loss
+    - tinnitus
+    - vertigo
+    - dizziness on standing
+    - imbalance
+    - unsteady gait
+    - ataxia
+    - numbness
+    - tingling
+    - paresthesia
+    - focal weakness
+    - paralysis
+    - tremor
+    - seizure
+    - convulsions
+    - confusion
+    - altered mental status
+    - memory loss
+    - amnesia
+    - aphasia
+    - slurred speech
+    - dysarthria
+    - drooling
+    - facial droop
+    - hoarseness
+    - voice change
+    - dysphagia
+    - odynophagia
+    - heartburn
+    - chest burning
+    - acid reflux
+    - abdominal pain
+    - epigastric pain
+    - right upper quadrant pain
+    - left lower quadrant pain
+    - bloating
+    - abdominal distension
+    - early satiety
+    - loss of appetite
+    - anorexia
+    - increased appetite
+    - polyphagia
+    - hiccups
+    - belching
+    - flatulence
+    - diarrhea
+    - loose stools
+    - constipation
+    - alternating bowel habits
+    - blood in stool
+    - hematochezia
+    - black tarry stools
+    - melena
+    - mucus in stool
+    - rectal pain
+    - tenesmus
+    - rectal bleeding
+    - anal itching
+    - dark urine
+    - pale stools
+    - dysuria
+    - burning urination
+    - urinary frequency
+    - urinary urgency
+    - hematuria
+    - flank pain
+    - lower abdominal pain
+    - suprapubic pain
+    - pelvic pain
+    - groin pain
+    - nocturia
+    - urinary incontinence
+    - urinary retention
+    - dribbling
+    - penile discharge
+    - scrotal swelling
+    - testicular pain
+    - vaginal discharge
+    - vaginal itching
+    - vaginal bleeding
+    - postmenopausal bleeding
+    - intermenstrual bleeding
+    - heavy periods
+    - menorrhagia
+    - painful periods
+    - dysmenorrhea
+    - amenorrhea
+    - dyspareunia
+    - erectile dysfunction
+    - hot flashes
+    - heat intolerance
+    - cold intolerance
+    - excessive thirst
+    - polydipsia
+    - excessive urination
+    - polyuria
+    - weight gain
+    - facial puffiness
+    - morning stiffness
+    - joint swelling
+    - joint stiffness
+    - gait disturbance
+    - muscle cramps
+    - muscle weakness
+    - claudication
+    - leg pain on exertion
+    - calf pain
+    - neck stiffness
+    - sinus pressure
+    - facial pain
+    - toothache
+    - dental pain
+    - mouth ulcers
+    - canker sores
+    - bad breath
+    - halitosis
+    - dry mouth
+    - xerostomia
+    - dry skin
+    - skin peeling
+    - pruritic rash
+    - swollen glands
+    - lymph node swelling
+    - chest pressure
+    - chest heaviness
+    - lightheadedness
+    - low-grade fever
+    - high-grade fever
+    - chills and rigors
+    - night-time cough
+    - morning cough
+    - throat clearing
+    - postnasal drip
+    - itchy eyes
+    - watery eyes
+    - loss of smell
+    - anosmia
+    - loss of taste
+    - ageusia
+    - snoring
+    - daytime sleepiness
+    - insomnia
+    - hypersomnia
+    - restless sleep
+    - nightmares
+    - anxiety
+    - nervousness
+    - panic attacks
+    - irritability
+    - agitation
+    - depressed mood
+    - anhedonia
+    - mood swings
+    - suicidal thoughts
+    - hallucinations
+    - delusions
+    - paranoia
+    - poor concentration
+    - brain fog
+    - decreased libido
+    - dehydration
+    - thirst
+    - abdominal swelling
+    - fluid retention
+    - fever
+    - cough
+    - chest pain
+    - headache
+    - nausea
+    - vomiting
+    - shortness of breath
+    - fatigue
+    - weight loss
+    - dizziness
+    - weakness
 
   MEDICATIONS:
+    -  # analgesics / antipyretics / GI / cardio you already had
     - paracetamol
+    - acetaminophen
     - ibuprofen
     - metformin
+    - glucophage
     - insulin
     - amoxicillin
     - atorvastatin
     - omeprazole
+    - aspirin
+    - statin
+    - lisinopril
+    - metoprolol
+
+    # *** Allergy / ENT brands (requested) ***
+    - Claritin         # loratadine
+    - Zyrtec           # cetirizine
+    - Allegra          # fexofenadine
+    - Nasonex          # mometasone furoate nasal spray
+    - Flonase          # fluticasone nasal spray
+    - Nasacort         # triamcinolone nasal spray
+
+    # generics for the brands above
+    - loratadine
+    - cetirizine
+    - fexofenadine
+    - mometasone
+    - fluticasone
+    - triamcinolone
+
+    # oral contraceptive from the note
+    - Ortho Tri-Cyclen
+    - Ortho Tri Cyclen
+    - Ortho-Cyclen
+    - Ortho Cyclen
+    - Tri-Cyclen
+    - Ortho Tri-Cyclen Lo
+
+    # dosage forms you want treated as meds in notes
+    - nasal spray
+    - nasal sprays
 
   PROCEDURES:
     - angioplasty
@@ -48,20 +526,68 @@ entities:
     - chemotherapy
     - radiation therapy
     - insulin therapy
+    - lifestyle modification
+    - diet
+    - exercise
 
   LAB_TESTS:
     - hemoglobin
     - creatinine
     - blood urea nitrogen
     - chest x-ray
+    - cxr
     - ecg
+    - a1c
+    - hba1c
+    - blood glucose
+    - glucose
+
+  PROGRAMS:
+    - overeaters anonymous
+
+  VITAL_SIGNS:
+    - blood pressure
+    - pulse
+    - heart rate
+    - respiratory rate
+    - temperature
+    - bmi
+    - weight
+
+  MEASUREMENT_UNITS:
+    - pounds
+    - lbs
+    - lb
+    - kg
+    - kilograms
+    - mg/dl
+    - mg/dl.
 
 patterns:
-  AGE: "\\b(?:age\\s*[:=]?\\s*)?(\\d{1,3})\\s*(?:years?|yrs?|y/o)\\b"
+  # AGE: "17-year-old", "aged 55", "62 years old", "17 yo", "17 y/o"
+  AGE: "\\b(?:(?:age\\s*[:=]?\\s*)?(\\d{1,3})\\s*(?:years?|yrs?|yr|y\\.?/?o\\.?|yo|years?\\s*old|year\\s*old)|aged\\s*(\\d{1,3})|(\\d{1,3})\\s*[- ]?year[- ]?old)\\b"
+
   DOSAGE: "\\b(\\d+(?:\\.\\d+)?)\\s*(mg|g|ml|units)\\b"
-  FREQUENCY: "\\b(?:once daily|twice daily|bd|tid|qid|q\\d+h|every \\d+ hours)\\b"
-  ROUTE: "\\b(?:po|iv|im|sc|subcut|oral|intravenous|intramuscular|subcutaneous)\\b"
+
+  # Frequency: qd/bid/tid/q12h/qhs/hs/prn…
+  FREQUENCY: "\\b(?:once\\s*(?:a\\s*)?day|twice\\s*(?:a\\s*)?day|three\\s*times\\s*(?:a\\s*)?day|daily|every\\s*day|bid|tid|qid|qod|qd|q\\.?\\d+\\s*h(?:ours?)?|q\\s*\\d+\\s*hours?|qhs|hs|nightly|prn)\\b"
+
+  # Route: includes punctuated forms and inhalation/nasal
+  ROUTE: "\\b(?:po|p\\.o\\.|iv|i\\.v\\.|im|i\\.m\\.|sc|s\\.c\\.|subcut|oral|intravenous|intramuscular|subcutaneous|inhalation|inh|nasal)\\b"
+
   DATE: "\\b(?:\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\s+\\d{1,2},\\s*\\d{4})\\b"
+
+  # Weight: "Weight was 130 pounds", "wt: 70 kg", "weight measured at 60 kg"
+  WEIGHT: "\\b(?:weight|wt)\\s*(?:today\\s*)?(?:is|was|=|:|measured\\s+at|of)?\\s*(\\d{2,3})\\s*(?:pounds?|lbs?|lb|kg|kilograms?)\\b"
+
+  # BP: require 'blood pressure' or 'bp' prefix
+  BP: "\\b(?:blood\\s*pressure|bp)\\s*(?:is|was|=|:)?\\s*(\\d{2,3})\\s*/\\s*(\\d{2,3})\\b"
+
+  GLUCOSE: "\\b(?:glucose|blood\\s*sugar|bg)\\s*(?:is|:|was)?\\s*(\\d{2,3})(?:\\s*mg/?dL)?\\b"
+
+  # NEW: pattern that recognizes common disease abbreviations & adjectives
+  # Produces type DISEASE so it works with @DISEASES in events.
+  DISEASE: "\\b(?:(?:cad|htn|dm|t\\s*[12]\\s*dm|t1dm|t2dm|copd|ckd|mi|pna|chf|cva|tia|ihd)\\b|(?:diabetes(?:\\s+mellitus)?|coronary\\s+artery\\s+disease|hypertension|pneumonia|asthma|chronic\\s+kidney\\s+disease|chronic\\s+obstructive\\s+pulmonary\\s+disease|myocardial\\s+infarction|anemia|depression|anxiety|heart\\s+failure|stroke)|(?:diabetic|hypertensive|asthmatic))\\b"
 
 events:
   MedicationAdministration:
@@ -74,7 +600,22 @@ events:
       time: "@DATE"
 
   Diagnosis:
-    triggers: ["diagnosed with", "dx:", "impression", "assessment", "final diagnosis"]
+    triggers:
+      - diagnosed with
+      - diagnosis
+      - "diagnosis:"
+      - dx
+      - "dx:"
+      - impression
+      - "impression:"
+      - assessment
+      - "assessment:"
+      - final diagnosis
+      - clinical diagnosis
+      - consistent with
+      - c/w
+      - evidence of
+      - findings suggest
     args:
       disease: "@DISEASES"
       time: "@DATE"

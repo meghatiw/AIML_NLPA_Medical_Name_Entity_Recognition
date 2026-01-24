@@ -8,7 +8,8 @@ export default defineConfig({
       '/extract': 'http://127.0.0.1:5000',
       '/upload': 'http://127.0.0.1:5000',
       '/export': 'http://127.0.0.1:5000',
-      '/dataset': 'http://127.0.0.1:5000'
+      '/dataset': 'http://127.0.0.1:5000',
+      '/mtsamples': 'http://127.0.0.1:5000'
     }
   }
 })

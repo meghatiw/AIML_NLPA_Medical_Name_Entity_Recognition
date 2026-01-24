@@ -1,0 +1,61 @@
+generic_name	drug_class	aliases_pipe	brand_synonyms_pipe	notes
+cetirizine	antihistamine	cetirizine | cetirizine dihydrochloride	Cetzine | Zyrtec	2nd gen H1
+levocetirizine	antihistamine	levocetirizine	Levocet | Xyzal	2nd gen H1
+loratadine	antihistamine	loratadine	Claritin	2nd gen H1
+desloratadine	antihistamine	desloratadine	Clarinex	active metabolite of loratadine
+fexofenadine	antihistamine	fexofenadine	Allegra	2nd gen H1
+diphenhydramine	antihistamine	diphenhydramine	Benadryl	1st gen H1; sedating
+chlorpheniramine	antihistamine	chlorpheniramine	Chlor-Trimeton	1st gen H1
+pheniramine	antihistamine	pheniramine	Avil	1st gen H1
+hydroxyzine	antihistamine	hydroxyzine	Atarax	anxiolytic/antipruritic
+promethazine	antihistamine	promethazine	Phenergan	antiemetic; sedating
+pseudoephedrine	decongestant	pseudoephedrine	Sudafed	sympathomimetic
+phenylephrine	decongestant	phenylephrine		alpha-1 agonist
+oxymetazoline	nasal decongestant	oxymetazoline	Afrin	topical nasal
+xylometazoline	nasal decongestant	xylometazoline	Otrivin	topical nasal
+fluticasone propionate	nasal corticosteroid	fluticasone propionate	Flonase	
+mometasone furoate	nasal corticosteroid	mometasone furoate	Nasonex	
+budesonide	nasal corticosteroid	budesonide	Rhinocort	
+triamcinolone acetonide	nasal corticosteroid	triamcinolone acetonide	Nasacort	
+salbutamol	beta-2 agonist (SABA)	albuterol | salbutamol	ProAir | Ventolin	SABA
+levalbuterol	beta-2 agonist (SABA)	levalbuterol	Xopenex	
+formoterol	beta-2 agonist (LABA	formoterol		
+salmeterol	beta-2 agonist (LABA)	salmeterol	Serevent	
+ipratropium	anticholinergic (SAMA)	ipratropium	Atrovent	
+tiotropium	anticholinergic (LAMA)	tiotropium	Spiriva	
+montelukast	leukotriene receptor antagonist	montelukast	Singulair	
+budesonide	inhaled corticosteroid	budesonide	Pulmicort	also nasal formulation
+fluticasone	inhaled corticosteroid	fluticasone	Flovent	
+beclomethasone	inhaled corticosteroid	beclomethasone		
+paracetamol	analgesic/antipyretic	acetaminophen | paracetamol | pcm	Calpol | Crocin | Dolo 650 | Tylenol	
+ibuprofen	NSAID	ibuprofen	Advil | Brufen	
+naproxen	NSAID	naproxen	Aleve	
+diclofenac	NSAID	diclofenac	Voveran	
+aspirin	NSAID/antiplatelet	acetylsalicylic acid | asa | aspirin	Disprin	
+ketorolac	NSAID	ketorolac		
+celecoxib	COX-2 inhibitor	celecoxib		
+etoricoxib	COX-2 inhibitor	etoricoxib		
+indomethacin	NSAID	indomethacin		
+mefenamic acid	NSAID	mefenamic acid	Meftal	
+tramadol	opioid analgesic	tramadol		
+acetylcysteine	mucolytic/antidote	acetylcysteine | n-acetylcysteine | nac		
+dextromethorphan	antitussive	dextromethorphan		
+guaifenesin	expectorant	guaifenesin		
+ambroxol	mucolytic	ambroxol		
+levosalbutamol	beta-2 agonist (SABA)	levalbuterol | levosalbutamol		
+omeprazole	proton pump inhibitor (PPI)	omeprazole		
+pantoprazole	proton pump inhibitor (PPI)	pantoprazole		
+esomeprazole	proton pump inhibitor (PPI)	esomeprazole		
+rabeprazole	proton pump inhibitor (PPI)	rabeprazole		
+lansoprazole	proton pump inhibitor (PPI)	lansoprazole		
+famotidine	H2 blocker	famotidine		
+ranitidine	H2 blocker	ranitidine		withdrawn in many markets
+ondansetron	antiemetic (5-HT3 antagonist)	ondansetron		
+metoclopramide	prokinetic/antiemetic	metoclopramide		
+domperidone	prokinetic/antiemetic	domperidone		
+dicyclomine	antispasmodic	dicyclomine		
+hyoscine butylbromide	antispasmodic	buscopan | hyoscine butylbromide | scopolamine butylbromide		
+mesalamine	anti-inflammatory (IBD)	5-aminosalicylic acid | mesalamine | mesalazine		
+loperamide	antidiarrheal	loperamide		
+amoxicillin	penicillin antibiotic	amoxicillin | amoxycillin		
+amoxicillin-clavulanate	penicillin + beta-lactamase inhibitor	amoxicillin + clavulanic acid | amoxicillin-clavulanate | co-amoxiclav	Augmentin	
